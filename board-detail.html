@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>게시글 — AI바이브웹</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <link rel="stylesheet" href="css/board.css" />
+  
+</head>
+<body>
+
+  <!-- ━━━━━━━━━━━━━━ HEADER ━━━━━━━━━━━━━━ -->
+  <header class="scrolled">
+    <div class="inner">
+      <a href="index.html" class="logo">AI바이브웹</a>
+      <nav>
+        <a href="index.html#intro">소개</a>
+        <a href="index.html#curriculum">커리큘럼</a>
+        <a href="index.html#techstack">기술스택</a>
+        <a href="board.html" class="active">커뮤니티</a>
+      </nav>
+      <div class="nav-btns">
+        <button class="btn-login" id="btnLogin" onclick="window.location.href='login.html'">로그인</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ━━━━━━━━━━━━━━ CONTENT ━━━━━━━━━━━━━━ -->
+  <div class="page-wrap">
+    <div class="inner" style="max-width: 860px;">
+      <div class="page-label">Community</div>
+
+      <!-- 게시글 본문 -->
+      <div class="post-header">
+        <h1 class="post-title" id="postTitle">게시글 제목</h1>
+        <div class="post-meta">
+          <span id="postAuthor">작성자</span>
+          <span id="postDate">작성일</span>
+          <span>조회 <span id="postViews">0</span></span>
+        </div>
+      </div>
+
+      <div class="post-body" id="postBody"></div>
+
+      <div class="post-attachments" id="postAttachments" style="display:none;">
+        <div class="attachment-label">첨부파일</div>
+        <ul class="attachment-list" id="attachmentList"></ul>
+      </div>
+
+      <div class="post-actions">
+        <a href="board.html" class="btn-back">목록으로</a>
+        <div class="post-owner-btns" id="ownerBtns" style="display:none;">
+          <a href="board-write.html" class="btn-edit" id="btnEdit">수정</a>
+          <button class="btn-delete" id="btnDelete">삭제</button>
+        </div>
+      </div>
+
+      <!-- 댓글 -->
+      <div class="comments-section">
+        <div class="comments-title">댓글 <span id="commentCount">0</span>개</div>
+
+        <div class="comment-write" id="commentWrite">
+          <textarea id="commentText" placeholder="댓글을 입력하세요"></textarea>
+          <button class="btn-comment" id="btnComment">댓글 등록</button>
+        </div>
+
+        <div class="comment-list" id="commentList">
+          <div class="no-comments">아직 댓글이 없습니다.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━ FOOTER ━━━━━━━━━━━━━━ -->
+  <footer>
+    <div class="inner">
+      <div class="f-logo">AI바이브웹</div>
+      <div class="f-links">
+        <a href="#">개인정보처리방침</a>
+        <a href="#">이용약관</a>
+        <a href="index.html#contact">문의하기</a>
+      </div>
+    </div>
+    <p class="f-copy">© 2026 AI바이브웹. All rights reserved.</p>
+  </footer>
+
+  <script type="module" src="js/board-detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>자유게시판 — AI바이브웹</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <link rel="stylesheet" href="css/board.css" />
+  
+</head>
+<body>
+
+  <!-- ━━━━━━━━━━━━━━ HEADER ━━━━━━━━━━━━━━ -->
+  <header>
+    <div class="inner">
+      <a href="index.html" class="logo">AI바이브웹</a>
+      <nav>
+        <a href="index.html#intro">소개</a>
+        <a href="index.html#curriculum">커리큘럼</a>
+        <a href="index.html#techstack">기술스택</a>
+        <a href="board.html" class="active">커뮤니티</a>
+      </nav>
+      <div class="nav-btns">
+        <button class="btn-login" id="btnLogin" onclick="window.location.href='login.html'">로그인</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ━━━━━━━━━━━━━━ CONTENT ━━━━━━━━━━━━━━ -->
+  <div class="page-wrap">
+    <div class="inner">
+      <div class="page-header">
+        <div class="page-label">Community</div>
+        <h1 class="page-title">자유게시판</h1>
+      </div>
+
+      <div class="board-toolbar">
+        <form class="search-form" onsubmit="handleSearch(event)">
+          <select id="searchType">
+            <option value="title">제목</option>
+            <option value="content">내용</option>
+            <option value="author">작성자</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="검색어를 입력하세요" />
+          <button type="submit" class="btn-search">검색</button>
+        </form>
+        <button class="btn-write" id="btnWrite">글쓰기</button>
+      </div>
+
+      <div class="board-info">총 <span id="totalCount">0</span>개의 게시글</div>
+
+      <table class="board-table">
+        <thead>
+          <tr>
+            <th class="col-no">번호</th>
+            <th class="col-title">제목</th>
+            <th class="col-author">작성자</th>
+            <th class="col-date">작성일</th>
+            <th class="col-views">조회</th>
+          </tr>
+        </thead>
+        <tbody id="postList">
+          <tr><td colspan="5" class="board-empty">게시글을 불러오는 중...</td></tr>
+        </tbody>
+      </table>
+
+      <div class="pagination" id="pagination"></div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━ FOOTER ━━━━━━━━━━━━━━ -->
+  <footer>
+    <div class="inner">
+      <div class="f-logo">AI바이브웹</div>
+      <div class="f-links">
+        <a href="#">개인정보처리방침</a>
+        <a href="#">이용약관</a>
+        <a href="index.html#contact">문의하기</a>
+      </div>
+    </div>
+    <p class="f-copy">© 2026 AI바이브웹. All rights reserved.</p>
+  </footer>
+
+  <script type="module">
+    import { supabase } from './js/supabase.js';
+
+    const PAGE_SIZE = 10;
+    let currentPage = 1;
+    let currentPageSet = 0; // 0-indexed, 10페이지씩 묶음
+    let totalCount = 0;
+    let searchQuery = { type: 'title', keyword: '' };
+
+    async function loadPosts(page = 1) {
+      const tbody = document.getElementById('postList');
+      tbody.innerHTML = '<tr><td colspan="5" class="board-empty">불러오는 중...</td></tr>';
+
+      const from = (page - 1) * PAGE_SIZE;
+      const to   = from + PAGE_SIZE - 1;
+
+      try {
+        let query = supabase
+          .from('posts')
+          .select('id, title, author_id, created_at, views', { count: 'exact' })
+          .order('created_at', { ascending: false })
+          .range(from, to);
+
+        if (searchQuery.keyword) {
+          if (searchQuery.type === 'title')   query = query.ilike('title', `%${searchQuery.keyword}%`);
+          if (searchQuery.type === 'content') query = query.ilike('content', `%${searchQuery.keyword}%`);
+          if (searchQuery.type === 'author')  query = query.ilike('author_id', `%${searchQuery.keyword}%`);
+        }
+
+        const { data, error, count } = await query;
+        if (error) throw error;
+
+        totalCount = count || 0;
+        document.getElementById('totalCount').textContent = totalCount;
+
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="board-empty">게시글이 없습니다.</td></tr>';
+          document.getElementById('pagination').innerHTML = '';
+          return;
+        }
+
+        tbody.innerHTML = data.map(post => `
+          <tr>
+            <td>${post.id}</td>
+            <td class="col-title">
+              <a href="post.html?id=${post.id}">${escapeHtml(post.title)}</a>
+            </td>
+            <td>${escapeHtml(post.author_id || '익명')}</td>
+            <td>${formatDate(post.created_at)}</td>
+            <td>${post.views || 0}</td>
+          </tr>`).join('');
+
+        renderPagination(page);
+      } catch {
+        tbody.innerHTML = '<tr><td colspan="5" class="board-empty">게시글을 불러올 수 없습니다.</td></tr>';
+      }
+    }
+
+    function renderPagination(activePage) {
+      const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+      if (totalPages <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
+
+      const setStart = Math.floor((activePage - 1) / 10) * 10 + 1;
+      const setEnd   = Math.min(setStart + 9, totalPages);
+
+      let html = '';
+      html += `<button class="page-btn nav" ${setStart === 1 ? 'disabled' : ''} onclick="goPageSet(${setStart - 10})">‹</button>`;
+      for (let i = setStart; i <= setEnd; i++) {
+        html += `<button class="page-btn ${i === activePage ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+      }
+      html += `<button class="page-btn nav" ${setEnd === totalPages ? 'disabled' : ''} onclick="goPageSet(${setStart + 10})">›</button>`;
+
+      document.getElementById('pagination').innerHTML = html;
+    }
+
+    window.goPage = function(page) {
+      currentPage = page;
+      loadPosts(page);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.goPageSet = function(page) {
+      if (page < 1) return;
+      goPage(page);
+    };
+
+    window.handleSearch = function(e) {
+      e.preventDefault();
+      searchQuery.type    = document.getElementById('searchType').value;
+      searchQuery.keyword = document.getElementById('searchInput').value.trim();
+      currentPage = 1;
+      loadPosts(1);
+    };
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function formatDate(str) {
+      if (!str) return '';
+      const d = new Date(str);
+      return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    loadPosts(1);
+  </script>
+
+</body>
+</html>

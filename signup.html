@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>회원가입 — AI바이브웹</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  
+</head>
+<body>
+
+  <!-- ━━━━━━━━━━━━━━ HEADER ━━━━━━━━━━━━━━ -->
+  <header>
+    <div class="inner">
+      <a href="index.html" class="logo">AI바이브웹</a>
+      <nav>
+        <a href="index.html#intro">소개</a>
+        <a href="index.html#curriculum">커리큘럼</a>
+        <a href="index.html#techstack">기술스택</a>
+        <a href="index.html#effect">기대효과</a>
+        <a href="index.html#community">커뮤니티</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="auth-wrap">
+    <div class="auth-box">
+      <h1 class="auth-title">회원가입</h1>
+
+      <form class="auth-form" id="signupForm" onsubmit="return false;">
+        <div class="auth-field">
+          <label for="email">이메일</label>
+          <input type="email" id="email" placeholder="이메일을 입력하세요" />
+        </div>
+        <div class="auth-field">
+          <label for="nickname">닉네임</label>
+          <input type="text" id="nickname" placeholder="닉네임을 입력하세요" />
+          <span class="hint">게시판에 표시되는 이름입니다</span>
+        </div>
+        <div class="auth-field">
+          <label for="password">비밀번호</label>
+          <input type="password" id="password" placeholder="비밀번호 (6자 이상)" />
+        </div>
+        <div class="auth-field">
+          <label for="passwordConfirm">비밀번호 확인</label>
+          <input type="password" id="passwordConfirm" placeholder="비밀번호를 다시 입력하세요" />
+        </div>
+        <p class="auth-msg" id="authMsg"></p>
+        <button type="submit" class="btn-auth">회원가입</button>
+      </form>
+
+      <div class="auth-footer">
+        이미 계정이 있으신가요? <a href="login.html">로그인</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ━━━━━━━━━━━━━━ FOOTER ━━━━━━━━━━━━━━ -->
+  <footer>
+    <div class="inner">
+      <div class="f-logo">AI바이브웹</div>
+      <div class="f-links">
+        <a href="#">개인정보처리방침</a>
+        <a href="#">이용약관</a>
+        <a href="index.html#contact">문의하기</a>
+      </div>
+    </div>
+    <p class="f-copy">© 2026 AI바이브웹. All rights reserved.</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://cwphhxahdjsxagadoywg.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3cGhoeGFoZGpzeGFnYWRveXdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NzgxNzUsImV4cCI6MjA4OTA1NDE3NX0.zcKp3UH4Ebyt-yKYci6DfYFyzJerHZAAWKGlfpxX4rU'
+    );
+
+    document.getElementById('signupForm').addEventListener('submit', async function() {
+      const email    = document.getElementById('email').value.trim();
+      const nickname = document.getElementById('nickname').value.trim();
+      const password = document.getElementById('password').value;
+      const confirm  = document.getElementById('passwordConfirm').value;
+      const msgEl    = document.getElementById('authMsg');
+
+      if (!email || !nickname || !password || !confirm) {
+        msgEl.textContent = '모든 항목을 입력해 주세요.';
+        return;
+      }
+      if (password.length < 6) {
+        msgEl.textContent = '비밀번호는 6자 이상이어야 합니다.';
+        return;
+      }
+      if (password !== confirm) {
+        msgEl.textContent = '비밀번호가 일치하지 않습니다.';
+        return;
+      }
+
+      msgEl.textContent = '처리 중...';
+
+      const { error } = await sb.auth.signUp({
+        email,
+        password,
+        options: { data: { nickname } }
+      });
+
+      if (error) {
+        msgEl.textContent = '오류: ' + error.message;
+        return;
+      }
+
+      alert('회원가입이 완료되었습니다!');
+      window.location.href = 'login.html';
+    });
+  </script>
+</body>
+</html>
