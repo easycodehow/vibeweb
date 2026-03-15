@@ -86,9 +86,26 @@
 
     const PAGE_SIZE = 10;
     let currentPage = 1;
-    let currentPageSet = 0; // 0-indexed, 10페이지씩 묶음
     let totalCount = 0;
     let searchQuery = { type: 'title', keyword: '' };
+    let currentSession = null;
+
+    // 헤더 버튼 + 글쓰기 버튼
+    const btnLogin = document.getElementById('btnLogin');
+    const btnWrite = document.getElementById('btnWrite');
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      currentSession = session;
+      if (session) {
+        btnLogin.textContent = '로그아웃';
+        btnLogin.onclick = async () => { await supabase.auth.signOut(); window.location.reload(); };
+        btnWrite.onclick = () => { window.location.href = 'board-write.html'; };
+      } else {
+        btnLogin.textContent = '로그인';
+        btnLogin.onclick = () => { window.location.href = 'login.html'; };
+        btnWrite.onclick = () => { alert('로그인이 필요합니다.'); window.location.href = 'login.html'; };
+      }
+    });
 
     async function loadPosts(page = 1) {
       const tbody = document.getElementById('postList');
@@ -100,14 +117,14 @@
       try {
         let query = supabase
           .from('posts')
-          .select('id, title, author_id, created_at, views', { count: 'exact' })
+          .select('id, title, author_email, created_at, views', { count: 'exact' })
           .order('created_at', { ascending: false })
           .range(from, to);
 
         if (searchQuery.keyword) {
           if (searchQuery.type === 'title')   query = query.ilike('title', `%${searchQuery.keyword}%`);
           if (searchQuery.type === 'content') query = query.ilike('content', `%${searchQuery.keyword}%`);
-          if (searchQuery.type === 'author')  query = query.ilike('author_id', `%${searchQuery.keyword}%`);
+          if (searchQuery.type === 'author')  query = query.ilike('author_email', `%${searchQuery.keyword}%`);
         }
 
         const { data, error, count } = await query;
@@ -126,9 +143,9 @@
           <tr>
             <td>${post.id}</td>
             <td class="col-title">
-              <a href="post.html?id=${post.id}">${escapeHtml(post.title)}</a>
+              <a href="board-detail.html?id=${post.id}">${escapeHtml(post.title)}</a>
             </td>
-            <td>${escapeHtml(post.author_id || '익명')}</td>
+            <td>${escapeHtml(post.author_email ? post.author_email.split('@')[0] : '익명')}</td>
             <td>${formatDate(post.created_at)}</td>
             <td>${post.views || 0}</td>
           </tr>`).join('');

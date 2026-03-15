@@ -58,3 +58,18 @@ function formatDate(str) {
 }
 
 loadRecentPosts();
+
+// 헤더 로그인/로그아웃 버튼
+const btnLogin = document.getElementById('btnLogin');
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session) {
+    btnLogin.textContent = '로그아웃';
+    btnLogin.onclick = async () => {
+      await supabase.auth.signOut();
+      window.location.reload();
+    };
+  } else {
+    btnLogin.textContent = '로그인';
+    btnLogin.onclick = () => { window.location.href = 'login.html'; };
+  }
+});
