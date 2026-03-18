@@ -488,7 +488,7 @@
           b = Math.round(57  + (69  - 57)  * s);
         }
 
-        const alpha = 0.18 + 0.55 * Math.sin(t * Math.PI);
+        const alpha = 0.10 + 0.35 * Math.sin(t * Math.PI);
 
         ctx.beginPath();
         ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
@@ -513,13 +513,13 @@
       const xLines = [
         // [startX, startY, cp1x, cp1y, cp2x, cp2y, endX, endY, color, alpha]
         // ↗ 방향 (좌하 → 우상)
-        [0,        H*0.92,  W*0.35, H*0.25,  W*0.65, H*0.55,  W,    H*0.08,  '224,123,57',  0.55],
-        [0,        H*1.00,  W*0.30, H*0.40,  W*0.70, H*0.65,  W,    H*0.18,  '245,200,66',  0.45],
-        [0,        H*0.80,  W*0.38, H*0.15,  W*0.60, H*0.42,  W,    H*-0.05, '37,45,69',    0.40],
+        [0,        H*0.92,  W*0.35, H*0.25,  W*0.65, H*0.55,  W,    H*0.08,  '224,123,57',  0.35],
+        [0,        H*1.00,  W*0.30, H*0.40,  W*0.70, H*0.65,  W,    H*0.18,  '245,200,66',  0.28],
+        [0,        H*0.80,  W*0.38, H*0.15,  W*0.60, H*0.42,  W,    H*-0.05, '37,45,69',    0.25],
         // ↘ 방향 (좌상 → 우하)
-        [0,        H*0.05,  W*0.32, H*0.55,  W*0.68, H*0.30,  W,    H*0.75,  '245,200,66',  0.40],
-        [0,        H*0.18,  W*0.28, H*0.70,  W*0.72, H*0.45,  W,    H*0.88,  '224,123,57',  0.35],
-        [0,        H*-0.05, W*0.35, H*0.42,  W*0.65, H*0.22,  W,    H*0.60,  '37,45,69',    0.30],
+        [0,        H*0.05,  W*0.32, H*0.55,  W*0.68, H*0.30,  W,    H*0.75,  '245,200,66',  0.25],
+        [0,        H*0.18,  W*0.28, H*0.70,  W*0.72, H*0.45,  W,    H*0.88,  '224,123,57',  0.20],
+        [0,        H*-0.05, W*0.35, H*0.42,  W*0.65, H*0.22,  W,    H*0.60,  '37,45,69',    0.18],
       ];
 
       xLines.forEach(([x0,y0, c1x,c1y, c2x,c2y, x1,y1, color, alpha]) => {
@@ -530,6 +530,41 @@
         ctx.bezierCurveTo(c1x, c1y, c2x, c2y, x1, y1);
         ctx.stroke();
       });
+      ctx.restore();
+
+      // 왼쪽 상단 코너 반사 라인 (메인 ↗ 라인의 대칭)
+      ctx.save();
+      const CN = 55;
+      for (let i = 0; i < CN; i++) {
+        const t = i / (CN - 1);
+        // 색상: 노랑(245,200,66) → 오렌지(224,123,57) → 네이비(37,45,69)
+        let r, g, b;
+        if (t < 0.5) {
+          const s = t / 0.5;
+          r = Math.round(245 + (224 - 245) * s);
+          g = Math.round(200 + (123 - 200) * s);
+          b = Math.round(66  + (57  - 66)  * s);
+        } else {
+          const s = (t - 0.5) / 0.5;
+          r = Math.round(224 + (37  - 224) * s);
+          g = Math.round(123 + (45  - 123) * s);
+          b = Math.round(57  + (69  - 57)  * s);
+        }
+        const alpha  = 0.06 + 0.28 * Math.sin(t * Math.PI);
+        const startY = H * (0.30 + 0.34 * t);
+        const endY   = H * (-0.65 + 0.52 * t);
+        // 반대 C자: 두 컨트롤 포인트 모두 오른쪽으로 당김
+        const cp1X   = W * 0.22;
+        const cp1Y   = H * (0.36 + 0.20 * t);
+        const cp2X   = W * 0.24;
+        const cp2Y   = H * (0.06 + 0.14 * t);
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+        ctx.lineWidth = 0.9 + 0.6 * Math.sin(t * Math.PI);
+        ctx.moveTo(-10, startY);
+        ctx.bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, W*0.24 + 100, endY);
+        ctx.stroke();
+      }
       ctx.restore();
     }
 

@@ -127,8 +127,8 @@ nav a:hover { color: #252D45; }
   border-bottom: 1px solid #C8C4BE;
 }
 .hero-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  justify-content: center;
   align-items: center;
   min-height: 660px;
   position: relative;
@@ -137,6 +137,7 @@ nav a:hover { color: #252D45; }
   padding: 120px 0 80px;
   position: relative;
   z-index: 2;
+  text-align: center;
 }
 .hero-badge {
   display: inline-block;
@@ -168,7 +169,7 @@ nav a:hover { color: #252D45; }
   font-size: 36px;
   font-weight: 500;
   font-family: 'Noto Serif KR', serif;
-  color: #444;
+  color: #555;
   margin-bottom: 44px;
   line-height: 1.4;
 }
