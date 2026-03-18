@@ -1,0 +1,122 @@
+/* ── 관리자 페이지 전용 스타일 ── */
+
+.row-unread td { background: #FFF8E8; font-weight: 500; }
+
+.badge-read {
+  display: inline-block;
+  background: #E8E5E0;
+  color: #999;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.badge-unread {
+  display: inline-block;
+  background: #E07B39;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+/* ── 모달 ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+
+.modal-box {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 560px;
+  padding: 32px;
+  margin: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-date { font-size: 13px; color: #aaa; }
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #aaa;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+.modal-close:hover { color: #333; }
+
+.modal-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: #666;
+  border-bottom: 1px solid #ECEAE6;
+  padding-bottom: 12px;
+}
+
+.modal-message {
+  font-size: 16px;
+  color: #222;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  min-height: 80px;
+}
+
+.modal-actions { display: flex; justify-content: flex-end; }
+
+.btn-mark-read {
+  padding: 9px 22px;
+  background: #252D45;
+  color: #fff;
+  border: none;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-mark-read:hover { background: #1a2133; }
+
+/* ── 접근 거부 ── */
+.access-denied {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 72px);
+  padding-top: 72px;
+  gap: 16px;
+  color: #666;
+  font-size: 16px;
+}
+.access-denied a {
+  color: #252D45;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1.5px solid #252D45;
+  padding: 9px 24px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+.access-denied a:hover { background: #252D45; color: #fff; }

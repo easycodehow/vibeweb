@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI바이브웹</title>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;500&display=swap" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -12,17 +13,17 @@
   <!-- ━━━━━━━━━━━━━━ HEADER ━━━━━━━━━━━━━━ -->
   <header>
     <div class="inner">
-      <div class="logo">AI바이브웹</div>
+      <a href="#" class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">AI바이브웹</a>
       <nav>
         <a href="#intro">소개</a>
         <a href="#curriculum">커리큘럼</a>
         <a href="#techstack">기술스택</a>
         <a href="#effect">기대효과</a>
         <a href="#community">커뮤니티</a>
+        <a href="#contact">CONTACT</a>
       </nav>
       <div class="nav-btns">
         <button class="btn-login" id="btnLogin" onclick="window.location.href='login.html'">로그인</button>
-        <button class="btn-start" onclick="document.getElementById('curriculum').scrollIntoView({behavior:'smooth'})">시작하기 →</button>
       </div>
     </div>
   </header>
@@ -31,11 +32,10 @@
   <section id="hero">
     <div class="inner hero-inner">
       <div class="hero-text">
-        <h1>바이브코딩으로<br><span class="accent">나만의 웹</span>을<br>만드세요</h1>
+        <h1>"<span class="accent">제가</span> 다 할게요"</h1>
         <p>
-          바이브코딩으로 빠르게 프로젝트를 제작하며<br>
-          풀스택 웹 개발을 경험할 수 있습니다.<br>
-          AI 시대의 실용적 개발 역량에 도전해보세요.
+          아이디어를 말하면, AI가 코딩합니다.<br>
+          풀스택 웹 개발의 새로운 방법.
         </p>
       </div>
     </div>
@@ -416,49 +416,22 @@
   <!-- ━━━━━━━━━━━━━━ 문의 ━━━━━━━━━━━━━━ -->
   <section id="contact">
     <div class="inner">
+      <div class="contact-wrap">
       <div class="section-label">Contact</div>
       <div class="section-heading">궁금한 점이 있으신가요?<br><span>편하게 문의해 주세요</span></div>
-      <div class="contact-layout">
-
-        <div>
-          <p class="contact-desc">
-            바이브코딩 커리큘럼, 수강 방법, 또는 기타 궁금한 사항이 있으시면 메시지를 남겨주세요.<br>
-            빠른 시일 내에 답변 드리겠습니다.
-          </p>
-          <div class="contact-info">
-            <div class="contact-info-item">
-              <span class="ci-label">Email</span>
-              <span class="ci-value">hello@aivibeweb.kr</span>
-            </div>
-            <div class="contact-info-item">
-              <span class="ci-label">운영시간</span>
-              <span class="ci-value">평일 09:00 – 18:00</span>
-            </div>
-            <div class="contact-info-item">
-              <span class="ci-label">응답시간</span>
-              <span class="ci-value">영업일 기준 1–2일 이내</span>
-            </div>
-          </div>
+      <form class="contact-form" id="contactForm">
+        <div class="form-field">
+          <input type="text" id="contactName" placeholder="이름 (익명으로 남기려면 비워두세요)" />
         </div>
-
-        <form class="contact-form" onsubmit="return false;">
-          <div class="form-field">
-            <input type="text" placeholder="이름 (익명으로 남기려면 비워두세요)" />
-          </div>
-          <div class="form-field">
-            <textarea placeholder="메시지를 입력해 주세요 *"></textarea>
-          </div>
-          <div class="form-row">
-            <div class="form-field">
-              <input type="text" placeholder="소속 / 직업 (선택)" />
-            </div>
-            <div class="form-field">
-              <input type="email" placeholder="이메일 (선택)" />
-            </div>
-          </div>
-          <button class="btn-submit" type="submit">문의 보내기</button>
-        </form>
-
+        <div class="form-field">
+          <textarea id="contactMessage" placeholder="메시지를 입력해 주세요 *"></textarea>
+        </div>
+        <div class="form-field">
+          <input type="email" id="contactEmail" placeholder="이메일 (선택)" />
+        </div>
+        <div id="contactMsg" style="font-size:14px;min-height:20px;"></div>
+        <button class="btn-submit" type="submit">문의 보내기</button>
+      </form>
       </div>
     </div>
   </section>
@@ -573,5 +546,6 @@
 
   <script type="module" src="js/supabase.js"></script>
   <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/contact.js"></script>
 </body>
 </html>
