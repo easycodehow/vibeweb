@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>글쓰기 — AI바이브웹</title>
+  <title>공지 작성 — AI바이브웹</title>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   <link rel="stylesheet" href="css/board.css" />
-  
 </head>
 <body>
 
@@ -31,7 +30,7 @@
     <div class="inner" style="max-width: 860px;">
       <div class="page-header">
         <div class="page-label">Community</div>
-        <h1 class="page-title" id="formTitle">글쓰기</h1>
+        <h1 class="page-title" id="formTitle">공지 작성</h1>
       </div>
 
       <form class="write-form" id="writeForm" onsubmit="return false;">
@@ -52,7 +51,7 @@
         </div>
         <p class="write-msg" id="writeMsg"></p>
         <div class="write-actions">
-          <a href="board.html" class="btn-cancel">취소</a>
+          <a href="notice.html" class="btn-cancel" id="btnCancel">취소</a>
           <button type="submit" class="btn-save">저장</button>
         </div>
       </form>
@@ -72,6 +71,6 @@
     <p class="f-copy">© 2026 AI바이브웹. All rights reserved.</p>
   </footer>
 
-  <script type="module" src="js/board-write.js"></script>
+  <script type="module" src="js/notice-write.js"></script>
 </body>
 </html>

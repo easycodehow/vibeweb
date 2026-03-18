@@ -205,6 +205,34 @@ nav a:hover, nav a.active { color: #252D45; }
 .write-field textarea { height: 360px; line-height: 1.8; }
 .write-field input[type="file"] { font-family: 'Pretendard', sans-serif; font-size: 14px; color: #666; }
 .file-hint { font-size: 12px; color: #aaa; }
+.btn-file-select {
+  display: inline-block;
+  padding: 8px 18px;
+  background: #f4f2ef;
+  border: 1.5px solid #C8C4BE;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+  cursor: pointer;
+  width: fit-content;
+}
+.btn-file-select:hover { background: #e8e5e0; }
+.file-list { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-direction: column; gap: 6px; }
+.file-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.file-item .file-name { color: #333; }
+.file-item .file-size { color: #aaa; }
+.btn-file-remove {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0 4px;
+  line-height: 1;
+}
+.btn-file-remove:hover { color: #e55; }
+.file-preview { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; border: 1px solid #e0ddd8; flex-shrink: 0; }
 .write-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
 .btn-cancel {
   padding: 12px 28px;
@@ -244,8 +272,14 @@ nav a:hover, nav a.active { color: #252D45; }
 .post-attachments { padding: 16px 0; border-bottom: 1px solid #DEDAD5; }
 .attachment-label { font-size: 13px; font-weight: 600; color: #888; margin-bottom: 10px; }
 .attachment-list { display: flex; flex-direction: column; gap: 6px; list-style: none; }
-.attachment-list li a { font-size: 14px; color: #252D45; text-decoration: none; }
-.attachment-list li a:hover { text-decoration: underline; }
+.attachment-item { display: flex; align-items: center; gap: 8px; }
+.attachment-item a { font-size: 14px; color: #252D45; text-decoration: none; }
+.attachment-item a:hover { text-decoration: underline; }
+.attachment-name { font-size: 14px; color: #252D45; }
+.attachment-size { font-size: 12px; color: #aaa; }
+.attachment-icon { font-size: 15px; }
+.attachment-image { width: 120px; height: 120px; object-fit: cover; border-radius: 6px; border: 1px solid #e0ddd8; display: block; }
+.attachment-image-link { flex-shrink: 0; }
 .post-actions { display: flex; justify-content: space-between; align-items: center; padding: 20px 0; }
 .btn-back {
   font-size: 14px;

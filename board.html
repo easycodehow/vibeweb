@@ -118,6 +118,7 @@
         let query = supabase
           .from('posts')
           .select('id, title, author_email, created_at, views', { count: 'exact' })
+          .eq('category', 'free')
           .order('created_at', { ascending: false })
           .range(from, to);
 

@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>글쓰기 — AI바이브웹</title>
+  <title>공지사항 — AI바이브웹</title>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
   <link rel="stylesheet" href="css/board.css" />
-  
 </head>
 <body>
 
   <!-- ━━━━━━━━━━━━━━ HEADER ━━━━━━━━━━━━━━ -->
-  <header class="scrolled">
+  <header>
     <div class="inner">
       <a href="index.html" class="logo">AI바이브웹</a>
       <nav>
@@ -28,34 +27,42 @@
 
   <!-- ━━━━━━━━━━━━━━ CONTENT ━━━━━━━━━━━━━━ -->
   <div class="page-wrap">
-    <div class="inner" style="max-width: 860px;">
+    <div class="inner">
       <div class="page-header">
         <div class="page-label">Community</div>
-        <h1 class="page-title" id="formTitle">글쓰기</h1>
+        <h1 class="page-title">공지사항</h1>
       </div>
 
-      <form class="write-form" id="writeForm" onsubmit="return false;">
-        <div class="write-field">
-          <label for="postTitle">제목</label>
-          <input type="text" id="postTitle" placeholder="제목을 입력하세요" />
-        </div>
-        <div class="write-field">
-          <label for="postContent">내용</label>
-          <textarea id="postContent" placeholder="내용을 입력하세요"></textarea>
-        </div>
-        <div class="write-field">
-          <label>파일 첨부</label>
-          <label class="btn-file-select" for="postFile">파일 선택</label>
-          <input type="file" id="postFile" multiple style="display:none" />
-          <span class="file-hint">여러 파일을 동시에 선택할 수 있습니다 (파일당 최대 10MB)</span>
-          <ul class="file-list" id="fileList"></ul>
-        </div>
-        <p class="write-msg" id="writeMsg"></p>
-        <div class="write-actions">
-          <a href="board.html" class="btn-cancel">취소</a>
-          <button type="submit" class="btn-save">저장</button>
-        </div>
-      </form>
+      <div class="board-toolbar">
+        <form class="search-form" onsubmit="handleSearch(event)">
+          <select id="searchType">
+            <option value="title">제목</option>
+            <option value="content">내용</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="검색어를 입력하세요" />
+          <button type="submit" class="btn-search">검색</button>
+        </form>
+        <button class="btn-write" id="btnWrite" style="display:none;">글쓰기</button>
+      </div>
+
+      <div class="board-info">총 <span id="totalCount">0</span>개의 공지</div>
+
+      <table class="board-table">
+        <thead>
+          <tr>
+            <th class="col-no">번호</th>
+            <th class="col-title">제목</th>
+            <th class="col-author">작성자</th>
+            <th class="col-date">작성일</th>
+            <th class="col-views">조회</th>
+          </tr>
+        </thead>
+        <tbody id="postList">
+          <tr><td colspan="5" class="board-empty">게시글을 불러오는 중...</td></tr>
+        </tbody>
+      </table>
+
+      <div class="pagination" id="pagination"></div>
     </div>
   </div>
 
@@ -72,6 +79,6 @@
     <p class="f-copy">© 2026 AI바이브웹. All rights reserved.</p>
   </footer>
 
-  <script type="module" src="js/board-write.js"></script>
+  <script type="module" src="js/notice.js"></script>
 </body>
 </html>

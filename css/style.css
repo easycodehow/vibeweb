@@ -208,93 +208,114 @@ nav a:hover { color: #252D45; }
 }
 
 /* ── 소개 ── */
-#intro { background: #fff; }
-.intro-grid {
+#intro { background: #F5F3EF; }
+.intro-cards {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 48px;
-  align-items: center;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 8px;
 }
-.intro-visual {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  border-top: 1px solid #C8C4BE;
-  border-bottom: 1px solid #C8C4BE;
-  background: none;
-  padding: 0;
-  min-height: auto;
-}
-.vi-stat {
-  padding: 28px 24px;
-  border-right: 1px solid #C8C4BE;
-  border-bottom: 1px solid #C8C4BE;
-}
-.vi-stat:nth-child(2),
-.vi-stat:nth-child(4) { border-right: none; }
-.vi-stat:nth-child(3),
-.vi-stat:nth-child(4) { border-bottom: none; }
-.vi-num {
-  font-size: 32px;
-  font-weight: 700;
-  color: #6B7FA0;
-  line-height: 1;
-  margin-bottom: 8px;
-}
-.vi-label {
-  font-size: 16px;
-  color: #A8B4C4;
-  line-height: 1.5;
-}
-.intro-def {
-  background: none;
-  border-left: 5px solid #E07B39;
-  padding: 20px 24px;
-  margin-bottom: 28px;
-  font-size: 18px;
-  color: #252D45;
-  font-weight: 600;
-  line-height: 1.6;
-}
-.intro-desc {
-  font-size: 18px;
-  color: #444;
-  line-height: 1.8;
-  margin-bottom: 36px;
-}
-.compare-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-.compare-card {
-  border: 2px solid #DEDAD5;
-  padding: 24px;
-}
-.compare-card h4 {
-  font-size: 20px;
-  font-weight: 700;
-  color: #666;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #DEDAD5;
-}
-.compare-card ul {
-  list-style: none;
+.intro-card {
+  background: #fff;
+  border: 1px solid #E8E4DF;
+  border-radius: 12px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+.intro-card-body {
+  padding: 32px 28px 24px;
+}
+.intro-card-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #252D45;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.intro-card-desc {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.7;
+}
+.intro-card-visual {
+  margin: 0 20px 20px;
+  background: #F5F3EF;
+  border-radius: 10px;
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   gap: 10px;
 }
-.compare-card ul li {
-  font-size: 18px;
-  color: #666;
+
+/* 카드1 — 채팅 */
+.chat-bubble {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  max-width: 85%;
+}
+.chat-bubble.user {
+  background: #252D45;
+  color: #fff;
+  align-self: flex-end;
+  margin-left: auto;
+}
+.chat-bubble.ai {
+  background: #fff;
+  color: #333;
+  border: 1px solid #E8E4DF;
+}
+.chat-code {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: #888;
+  font-family: monospace;
+}
+
+/* 카드2 — 속도 */
+.speed-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  font-size: 13px;
 }
-.compare-card ul li::before { content: '→'; color: #999; font-weight: 700; }
-.compare-card.vibe { border-color: #C8C4BE; background: none; }
-.compare-card.vibe h4 { color: #252D45; border-bottom-color: #DEDAD5; }
-.compare-card.vibe ul li::before { content: '✓'; color: #252D45; }
+.speed-label { color: #666; width: 72px; flex-shrink: 0; }
+.speed-bar-wrap { flex: 1; background: #E8E4DF; border-radius: 4px; height: 10px; overflow: hidden; }
+.speed-bar { height: 100%; border-radius: 4px; }
+.speed-bar.slow { background: #C8C4BE; }
+.speed-bar.fast { background: #252D45; }
+.speed-val { color: #666; width: 36px; text-align: right; flex-shrink: 0; font-size: 12px; }
+.speed-stat {
+  margin-top: 4px;
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+}
+.speed-stat strong { color: #252D45; font-size: 18px; }
+
+/* 카드3 — 장벽 비교 */
+.barrier-compare {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.barrier-col { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.barrier-label { font-size: 12px; color: #999; font-weight: 600; margin-bottom: 2px; text-align: center; }
+.barrier-items { display: flex; flex-direction: column; gap: 6px; }
+.barrier-item {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  text-align: center;
+}
+.barrier-item.hard { background: #E8E4DF; color: #999; }
+.barrier-item.easy { background: #252D45; color: #fff; }
+.barrier-divider { color: #C8C4BE; font-size: 18px; flex-shrink: 0; }
 
 /* ── 전망 ── */
 #outlook { background: #F5F3EF; padding: 96px 0; }

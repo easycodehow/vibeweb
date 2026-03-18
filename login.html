@@ -37,6 +37,10 @@
           <label for="password">비밀번호</label>
           <input type="password" id="password" placeholder="비밀번호를 입력하세요" />
         </div>
+        <div class="auth-remember">
+          <input type="checkbox" id="rememberMe" />
+          <label for="rememberMe">로그인 유지</label>
+        </div>
         <p class="auth-msg" id="authMsg"></p>
         <button type="submit" class="btn-auth">로그인</button>
       </form>
@@ -63,15 +67,19 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const { createClient } = supabase;
+    const STORAGE_KEY = 'sb-cwphhxahdjsxagadoywg-auth-token';
+
     const sb = createClient(
       'https://cwphhxahdjsxagadoywg.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3cGhoeGFoZGpzeGFnYWRveXdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NzgxNzUsImV4cCI6MjA4OTA1NDE3NX0.zcKp3UH4Ebyt-yKYci6DfYFyzJerHZAAWKGlfpxX4rU'
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3cGhoeGFoZGpzeGFnYWRveXdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM0NzgxNzUsImV4cCI6MjA4OTA1NDE3NX0.zcKp3UH4Ebyt-yKYci6DfYFyzJerHZAAWKGlfpxX4rU',
+      { auth: { storage: window.sessionStorage, persistSession: true } }
     );
 
     document.getElementById('loginForm').addEventListener('submit', async function() {
-      const email    = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      const msgEl    = document.getElementById('authMsg');
+      const email      = document.getElementById('email').value.trim();
+      const password   = document.getElementById('password').value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+      const msgEl      = document.getElementById('authMsg');
 
       if (!email || !password) {
         msgEl.textContent = '이메일과 비밀번호를 입력해 주세요.';
@@ -85,6 +93,12 @@
       if (error) {
         msgEl.textContent = '로그인 실패: 이메일 또는 비밀번호를 확인해 주세요.';
         return;
+      }
+
+      // 로그인 유지 체크 시 localStorage에도 저장
+      if (rememberMe) {
+        const session = sessionStorage.getItem(STORAGE_KEY);
+        if (session) localStorage.setItem(STORAGE_KEY, session);
       }
 
       window.location.href = 'index.html';

@@ -3,7 +3,7 @@ import { supabase } from './supabase.js';
 const params = new URLSearchParams(location.search);
 const postId = params.get('id');
 
-if (!postId) location.href = 'board.html';
+if (!postId) location.href = 'notice.html';
 
 const btnLogin   = document.getElementById('btnLogin');
 const ownerBtns  = document.getElementById('ownerBtns');
@@ -13,40 +13,47 @@ const commentWrite = document.getElementById('commentWrite');
 const btnComment = document.getElementById('btnComment');
 
 let currentSession = null;
-let postAuthorId   = null;
+let isAdmin = false;
 
-// ── 인증 상태 ──────────────────────────────────────────
+async function checkAdmin(email) {
+  if (!email) return false;
+  const { data } = await supabase.from('admins').select('id').eq('email', email).single();
+  return !!data;
+}
+
 supabase.auth.onAuthStateChange((event, session) => {
   currentSession = session;
 
   if (session) {
     btnLogin.textContent = '로그아웃';
-    btnLogin.onclick = async () => {
-      await supabase.auth.signOut();
-      location.reload();
-    };
+    btnLogin.onclick = async () => { await supabase.auth.signOut(); location.reload(); };
     commentWrite.style.display = '';
   } else {
     btnLogin.textContent = '로그인';
     btnLogin.onclick = () => { location.href = 'login.html'; };
     commentWrite.style.display = 'none';
+    isAdmin = false;
+    updateOwnerBtns();
   }
-
-  // 게시글 소유자 버튼 갱신
-  updateOwnerBtns();
 });
 
+async function setupAdmin() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return;
+  isAdmin = await checkAdmin(session.user.email);
+  updateOwnerBtns();
+}
+
+setupAdmin();
+
 function updateOwnerBtns() {
-  if (!postAuthorId) return;
-  const uid = currentSession?.user?.id;
-  if (uid && uid === postAuthorId) {
+  if (isAdmin) {
     ownerBtns.style.display = '';
   } else {
     ownerBtns.style.display = 'none';
   }
 }
 
-// ── 게시글 로드 ────────────────────────────────────────
 async function loadPost() {
   const { data, error } = await supabase
     .from('posts')
@@ -56,40 +63,29 @@ async function loadPost() {
 
   if (error || !data) {
     alert('게시글을 찾을 수 없습니다.');
-    location.href = 'board.html';
+    location.href = 'notice.html';
     return;
   }
 
-  postAuthorId = data.author_id;
-
   document.title = `${data.title} — AI바이브웹`;
   document.getElementById('postTitle').textContent  = data.title;
-  document.getElementById('postAuthor').textContent = data.author_email ? data.author_email.split('@')[0] : '익명';
+  document.getElementById('postAuthor').textContent = data.author_email ? data.author_email.split('@')[0] : '관리자';
   document.getElementById('postDate').textContent   = formatDate(data.created_at);
   document.getElementById('postViews').textContent  = (data.views || 0) + 1;
   document.getElementById('postBody').innerHTML     = nl2br(escapeHtml(data.content));
 
-  btnEdit.href = `board-write.html?id=${postId}`;
+  btnEdit.href = `notice-write.html?id=${postId}`;
 
-  updateOwnerBtns();
-
-  // 조회수 +1 (에러 무시)
   supabase.from('posts').update({ views: (data.views || 0) + 1 }).eq('id', postId).then(() => {});
 }
 
-// ── 삭제 ──────────────────────────────────────────────
 btnDelete.addEventListener('click', async () => {
   if (!confirm('정말 삭제하시겠습니까?')) return;
-
   const { error } = await supabase.from('posts').delete().eq('id', postId);
-  if (error) {
-    alert('삭제 중 오류가 발생했습니다.');
-    return;
-  }
-  location.href = 'board.html';
+  if (error) { alert('삭제 중 오류가 발생했습니다.'); return; }
+  location.href = 'notice.html';
 });
 
-// ── 댓글 로드 ─────────────────────────────────────────
 async function loadComments() {
   const { data, error } = await supabase
     .from('comments')
@@ -121,7 +117,6 @@ async function loadComments() {
   }).join('');
 }
 
-// ── 댓글 등록 ─────────────────────────────────────────
 btnComment.addEventListener('click', async () => {
   const text = document.getElementById('commentText').value.trim();
   if (!text) { alert('댓글을 입력해주세요.'); return; }
@@ -134,16 +129,13 @@ btnComment.addEventListener('click', async () => {
     author_id:    currentSession.user.id,
     author_email: currentSession.user.email,
   });
-
   btnComment.disabled = false;
 
   if (error) { alert('댓글 등록 중 오류가 발생했습니다.'); return; }
-
   document.getElementById('commentText').value = '';
   loadComments();
 });
 
-// ── 댓글 삭제 ─────────────────────────────────────────
 window.deleteComment = async function(id) {
   if (!confirm('댓글을 삭제하시겠습니까?')) return;
   const { error } = await supabase.from('comments').delete().eq('id', id);
@@ -151,7 +143,6 @@ window.deleteComment = async function(id) {
   loadComments();
 };
 
-// ── 유틸 ──────────────────────────────────────────────
 function escapeHtml(str) {
   if (!str) return '';
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -167,7 +158,6 @@ function formatDate(str) {
   return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
 }
 
-// ── 첨부파일 로드 ─────────────────────────────────────
 async function loadAttachments() {
   const { data, error } = await supabase
     .from('attachments')
@@ -202,7 +192,6 @@ async function loadAttachments() {
   section.style.display = '';
 }
 
-// ── 초기화 ────────────────────────────────────────────
 loadPost();
 loadComments();
 loadAttachments();

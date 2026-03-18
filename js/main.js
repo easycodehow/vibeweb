@@ -8,41 +8,26 @@ async function loadRecentPosts() {
   try {
     const { data, error } = await supabase
       .from('posts')
-      .select('id, title, author_id, created_at, views')
+      .select('id, title, author_email, created_at, views')
+      .eq('category', 'free')
       .order('created_at', { ascending: false })
       .limit(5);
 
     if (error) throw error;
 
     if (!data || data.length === 0) {
-      container.innerHTML = `
-        <div class="board-list-head">
-          <span>번호</span><span>제목</span><span>작성자</span><span>작성일</span><span>조회</span>
-        </div>
-        <div class="board-no-data">아직 게시글이 없습니다.</div>`;
+      container.innerHTML = '<div class="board-item"><span class="post-title-link">아직 게시글이 없습니다.</span></div>';
       return;
     }
 
-    const rows = data.map(post => `
+    container.innerHTML = data.map((post, i) => `
       <div class="board-item">
-        <span class="meta">${post.id}</span>
-        <span><a href="post.html?id=${post.id}">${escapeHtml(post.title)}</a></span>
-        <span class="meta">${escapeHtml(post.author_id || '익명')}</span>
-        <span class="meta">${formatDate(post.created_at)}</span>
-        <span class="meta">${post.views || 0}</span>
+        <span class="post-num">${i + 1}</span>
+        <a href="board-detail.html?id=${post.id}" class="post-title-link">${escapeHtml(post.title)}</a>
+        <span class="post-date">${formatDate(post.created_at)}</span>
       </div>`).join('');
-
-    container.innerHTML = `
-      <div class="board-list-head">
-        <span>번호</span><span>제목</span><span>작성자</span><span>작성일</span><span>조회</span>
-      </div>
-      ${rows}`;
   } catch {
-    container.innerHTML = `
-      <div class="board-list-head">
-        <span>번호</span><span>제목</span><span>작성자</span><span>작성일</span><span>조회</span>
-      </div>
-      <div class="board-no-data">아직 게시글이 없습니다.</div>`;
+    container.innerHTML = '<div class="board-item"><span class="post-title-link">게시글을 불러올 수 없습니다.</span></div>';
   }
 }
 
@@ -58,6 +43,37 @@ function formatDate(str) {
 }
 
 loadRecentPosts();
+loadRecentNotices();
+
+async function loadRecentNotices() {
+  const container = document.getElementById('recentNotices');
+  if (!container) return;
+
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('id, title, created_at')
+      .eq('category', 'notice')
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    if (error) throw error;
+
+    if (!data || data.length === 0) {
+      container.innerHTML = '<div class="board-item"><span class="post-title-link">아직 공지사항이 없습니다.</span></div>';
+      return;
+    }
+
+    container.innerHTML = data.map((post, i) => `
+      <div class="board-item">
+        <span class="post-num">${i + 1}</span>
+        <a href="notice-detail.html?id=${post.id}" class="post-title-link">${escapeHtml(post.title)}</a>
+        <span class="post-date">${formatDate(post.created_at)}</span>
+      </div>`).join('');
+  } catch {
+    container.innerHTML = '<div class="board-item"><span class="post-title-link">공지사항을 불러올 수 없습니다.</span></div>';
+  }
+}
 
 // 헤더 로그인/로그아웃 버튼
 const btnLogin = document.getElementById('btnLogin');

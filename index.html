@@ -49,55 +49,74 @@
     <div class="inner">
       <div class="section-label">Introduction</div>
       <div class="section-heading">바이브코딩이란 <span>무엇인가요?</span></div>
-      <div class="intro-grid">
-        <div class="intro-visual">
-          <div class="vi-stat">
-            <div class="vi-num">2024</div>
-            <div class="vi-label">바이브코딩 등장</div>
+      <div class="intro-cards">
+
+        <div class="intro-card">
+          <div class="intro-card-body">
+            <h3 class="intro-card-title">AI와 대화하며 개발</h3>
+            <p class="intro-card-desc">코드 문법을 몰라도 됩니다. 원하는 것을 말하면 AI가 즉시 코드로 구현해줍니다.</p>
           </div>
-          <div class="vi-stat">
-            <div class="vi-num">5×</div>
-            <div class="vi-label">빠른 개발 속도</div>
-          </div>
-          <div class="vi-stat">
-            <div class="vi-num">0줄</div>
-            <div class="vi-label">문법 암기 불필요</div>
-          </div>
-          <div class="vi-stat">
-            <div class="vi-num">AI 협업</div>
-            <div class="vi-label">새로운 개발 패러다임</div>
+          <div class="intro-card-visual">
+            <div class="chat-bubble user">"로그인 페이지 만들어줘"</div>
+            <div class="chat-bubble ai">네, 완성했습니다 ✓<br><span class="chat-code">login.html 생성됨</span></div>
+            <div class="chat-bubble user">"버튼 색상 바꿔줘"</div>
+            <div class="chat-bubble ai">수정 완료 ✓</div>
           </div>
         </div>
-        <div>
-          <div class="intro-def">
-            "코드를 암기하는 것이 아닌, AI와 협업하여<br>아이디어를 즉각 구현하는 개발 패러다임"
+
+        <div class="intro-card">
+          <div class="intro-card-body">
+            <h3 class="intro-card-title">5배 빠른 개발 속도</h3>
+            <p class="intro-card-desc">전통적인 개발 방식 대비 압도적으로 빠릅니다. 아이디어가 제품이 되는 시간을 획기적으로 단축합니다.</p>
           </div>
-          <p class="intro-desc">
-            바이브코딩은 전통적인 코딩 방식의 높은 진입 장벽을 낮추고, 누구나 자신의 아이디어를 빠르게 제품으로 만들 수 있게 해줍니다. 문법 암기 대신 개념 이해와 AI 협업에 집중합니다.
-          </p>
-          <div class="compare-grid">
-            <div class="compare-card">
-              <h4>🔵 일반 코딩</h4>
-              <ul>
-                <li>문법 암기</li>
-                <li>코드 직접 작성</li>
-                <li>디버깅 반복</li>
-                <li>결과 확인</li>
-                <li>긴 학습 곡선</li>
-              </ul>
+          <div class="intro-card-visual">
+            <div class="speed-row">
+              <span class="speed-label">일반 코딩</span>
+              <div class="speed-bar-wrap">
+                <div class="speed-bar slow" style="width:100%"></div>
+              </div>
+              <span class="speed-val">100일</span>
             </div>
-            <div class="compare-card vibe">
-              <h4>✨ 바이브코딩</h4>
-              <ul>
-                <li>AI와 대화</li>
-                <li>즉각적 구현</li>
-                <li>빠른 수정</li>
-                <li>실시간 결과</li>
-                <li>짧은 학습 곡선</li>
-              </ul>
+            <div class="speed-row">
+              <span class="speed-label">바이브코딩</span>
+              <div class="speed-bar-wrap">
+                <div class="speed-bar fast" style="width:20%"></div>
+              </div>
+              <span class="speed-val">20일</span>
+            </div>
+            <div class="speed-stat">평균 <strong>5×</strong> 빠른 개발</div>
+          </div>
+        </div>
+
+        <div class="intro-card">
+          <div class="intro-card-body">
+            <h3 class="intro-card-title">낮은 진입 장벽</h3>
+            <p class="intro-card-desc">문법 암기 없이 개념 이해와 기획력만으로 시작할 수 있습니다. 누구나 개발자가 될 수 있습니다.</p>
+          </div>
+          <div class="intro-card-visual">
+            <div class="barrier-compare">
+              <div class="barrier-col">
+                <div class="barrier-label">전통 코딩</div>
+                <div class="barrier-items">
+                  <span class="barrier-item hard">문법 암기</span>
+                  <span class="barrier-item hard">알고리즘</span>
+                  <span class="barrier-item hard">디버깅</span>
+                  <span class="barrier-item hard">환경 설정</span>
+                </div>
+              </div>
+              <div class="barrier-divider">→</div>
+              <div class="barrier-col">
+                <div class="barrier-label">바이브코딩</div>
+                <div class="barrier-items">
+                  <span class="barrier-item easy">기획력</span>
+                  <span class="barrier-item easy">AI 대화</span>
+                  <span class="barrier-item easy">빠른 실행</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -359,7 +378,7 @@
         <div>
           <div class="board-header">
             <div class="board-title">공지사항</div>
-            <a href="board.html" class="btn-viewall">전체보기 ›</a>
+            <a href="notice.html" class="btn-viewall">전체보기 ›</a>
           </div>
           <hr class="board-divider">
           <div id="recentNotices">

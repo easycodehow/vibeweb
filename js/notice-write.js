@@ -1,64 +1,77 @@
 import { supabase } from './supabase.js';
 
-const params    = new URLSearchParams(location.search);
-const editId    = params.get('id');
-const isEdit    = !!editId;
+const params  = new URLSearchParams(location.search);
+const editId  = params.get('id');
+const isEdit  = !!editId;
 
-const btnLogin       = document.getElementById('btnLogin');
-const writeForm      = document.getElementById('writeForm');
-const postTitle      = document.getElementById('postTitle');
-const postContent    = document.getElementById('postContent');
-const writeMsg       = document.getElementById('writeMsg');
-const formTitle      = document.getElementById('formTitle');
-const btnSave        = writeForm.querySelector('.btn-save');
-const postFileInput  = document.getElementById('postFile');
-const fileListEl     = document.getElementById('fileList');
+const btnLogin      = document.getElementById('btnLogin');
+const writeForm     = document.getElementById('writeForm');
+const postTitle     = document.getElementById('postTitle');
+const postContent   = document.getElementById('postContent');
+const writeMsg      = document.getElementById('writeMsg');
+const formTitle     = document.getElementById('formTitle');
+const btnSave       = writeForm.querySelector('.btn-save');
+const btnCancel     = document.getElementById('btnCancel');
+const postFileInput = document.getElementById('postFile');
+const fileListEl    = document.getElementById('fileList');
 
 if (isEdit) {
-  formTitle.textContent = '글 수정';
+  formTitle.textContent = '공지 수정';
   btnSave.textContent   = '수정';
+  btnCancel.href        = `notice-detail.html?id=${editId}`;
 }
 
 let currentSession = null;
-let newFiles       = [];          // 새로 선택한 File 객체 배열
-let existingFiles  = [];          // 수정 모드: DB에서 불러온 기존 첨부파일
-let deletedIds     = new Set();   // 수정 모드: 삭제할 기존 첨부파일 id
+let newFiles       = [];
+let existingFiles  = [];
+let deletedIds     = new Set();
 
-// ── 인증 상태 ──────────────────────────────────────────
+async function checkAdmin(email) {
+  if (!email) return false;
+  const { data } = await supabase.from('admins').select('id').eq('email', email).single();
+  return !!data;
+}
+
 supabase.auth.onAuthStateChange((event, session) => {
   currentSession = session;
+  if (session) {
+    btnLogin.textContent = '로그아웃';
+    btnLogin.onclick = async () => { await supabase.auth.signOut(); location.href = 'index.html'; };
+  }
+});
+
+async function setupPage() {
+  const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {
     location.href = 'login.html';
     return;
   }
 
-  btnLogin.textContent = '로그아웃';
-  btnLogin.onclick = async () => {
-    await supabase.auth.signOut();
-    location.href = 'index.html';
-  };
+  currentSession = session;
+
+  const admin = await checkAdmin(session.user.email);
+  if (!admin) {
+    alert('관리자만 접근할 수 있습니다.');
+    location.href = 'notice.html';
+    return;
+  }
 
   if (isEdit) loadPost();
-});
+}
 
-// ── 기존 글 불러오기 (수정 모드) ───────────────────────
+setupPage();
+
 async function loadPost() {
   const { data, error } = await supabase
     .from('posts')
-    .select('title, content, author_id')
+    .select('title, content')
     .eq('id', editId)
     .single();
 
   if (error || !data) {
     alert('게시글을 찾을 수 없습니다.');
-    location.href = 'board.html';
-    return;
-  }
-
-  if (data.author_id !== currentSession.user.id) {
-    alert('수정 권한이 없습니다.');
-    location.href = `board-detail.html?id=${editId}`;
+    location.href = 'notice.html';
     return;
   }
 
@@ -68,7 +81,6 @@ async function loadPost() {
   await loadExistingAttachments();
 }
 
-// ── 기존 첨부파일 불러오기 ─────────────────────────────
 async function loadExistingAttachments() {
   const { data, error } = await supabase
     .from('attachments')
@@ -81,11 +93,9 @@ async function loadExistingAttachments() {
   renderFileList();
 }
 
-// ── 파일 목록 렌더링 ───────────────────────────────────
 function renderFileList() {
   fileListEl.innerHTML = '';
 
-  // 기존 파일 (수정 모드)
   existingFiles.forEach(f => {
     if (deletedIds.has(f.id)) return;
     const li = document.createElement('li');
@@ -110,7 +120,6 @@ function renderFileList() {
     fileListEl.appendChild(li);
   });
 
-  // 새로 선택한 파일
   newFiles.forEach((f, idx) => {
     const li = document.createElement('li');
     li.className = 'file-item';
@@ -134,9 +143,8 @@ function renderFileList() {
   });
 }
 
-// ── 파일 선택 이벤트 ──────────────────────────────────
 postFileInput.addEventListener('change', () => {
-  const MAX = 10 * 1024 * 1024; // 10MB
+  const MAX = 10 * 1024 * 1024;
   const selected = Array.from(postFileInput.files);
   const oversized = selected.filter(f => f.size > MAX);
 
@@ -151,7 +159,6 @@ postFileInput.addEventListener('change', () => {
   renderFileList();
 });
 
-// ── 저장 ──────────────────────────────────────────────
 writeForm.addEventListener('submit', async () => {
   const title   = postTitle.value.trim();
   const content = postContent.value.trim();
@@ -169,40 +176,32 @@ writeForm.addEventListener('submit', async () => {
     const { error } = await supabase
       .from('posts')
       .update({ title, content })
-      .eq('id', editId)
-      .eq('author_id', currentSession.user.id);
+      .eq('id', editId);
 
-    if (error) {
-      showError('저장 중 오류가 발생했습니다.');
-      return;
-    }
+    if (error) { showError('저장 중 오류가 발생했습니다.'); return; }
   } else {
     const { data, error } = await supabase
       .from('posts')
       .insert({
         title,
         content,
+        category:     'notice',
         author_id:    currentSession.user.id,
         author_email: currentSession.user.email,
       })
       .select('id')
       .single();
 
-    if (error || !data) {
-      showError('저장 중 오류가 발생했습니다.');
-      return;
-    }
+    if (error || !data) { showError('저장 중 오류가 발생했습니다.'); return; }
     postId = data.id;
   }
 
-  // 기존 첨부파일 삭제 (수정 모드)
+  // 기존 첨부파일 삭제
   if (deletedIds.size > 0) {
     const toDelete = existingFiles.filter(f => deletedIds.has(f.id));
     for (const f of toDelete) {
       const storagePath = f.file_url.split('/post-attachments/')[1];
-      if (storagePath) {
-        await supabase.storage.from('post-attachments').remove([storagePath]);
-      }
+      if (storagePath) await supabase.storage.from('post-attachments').remove([storagePath]);
     }
     await supabase.from('attachments').delete().in('id', [...deletedIds]);
   }
@@ -228,10 +227,9 @@ writeForm.addEventListener('submit', async () => {
     });
   }
 
-  location.href = isEdit ? `board-detail.html?id=${editId}` : `board-detail.html?id=${postId}`;
+  location.href = isEdit ? `notice-detail.html?id=${editId}` : 'notice.html';
 });
 
-// ── 유틸 ──────────────────────────────────────────────
 function showError(msg) {
   writeMsg.textContent = msg;
   btnSave.disabled     = false;
